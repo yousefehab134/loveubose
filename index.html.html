@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i love u bose</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-pink: #d87093;
+            --dark-pink: #9e476b;
+            --soft-bg: #fff5f7;
+            --accent-rose: #ff8da1;
+            --text-color: #5c3b46;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Fredoka', 'Tajawal', sans-serif;
+            background-color: var(--soft-bg);
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* Music & Volume Control Box */
+        .music-control-box {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            border: 2px solid #ffb6c1;
+            border-radius: 25px;
+            padding: 5px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .music-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .volume-slider {
+            width: 70px;
+            accent-color: var(--primary-pink);
+            cursor: pointer;
+        }
+
+        #sakura-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease-in-out;
+            z-index: 1;
+        }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        /* Page 1: Passcode Screen with Dark Pink Gradient & Slideshow Background */
+        #screen-1 {
+            background-blend-mode: overlay;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 1s ease-in-out;
+            overflow: hidden;
+        }
+
+        .passcode-card {
+            background: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(10px);
+            padding: 30px 25px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 310px;
+            z-index: 5;
+            border: 2px solid rgba(255,255,255,0.5);
+            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .passcode-title {
+            font-size: 24px;
+            color: var(--dark-pink);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .hint-text {
+            font-size: 13px;
+            color: #d9534f;
+            height: 20px;
+            margin-bottom: 8px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .hint-text.visible {
+            opacity: 1;
+        }
+
+        .passcode-display {
+            background: #fff0f3;
+            border: 2px solid #f2b6c6;
+            border-radius: 15px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 8px;
+            font-size: 22px;
+            color: var(--dark-pink);
+            margin-bottom: 18px;
+            font-weight: bold;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            direction: ltr;
+        }
+
+        .num-btn {
+            background: #ffffff;
+            border: 2px solid #fce4ec;
+            border-radius: 16px;
+            padding: 12px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark-pink);
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+            transition: all 0.15s ease;
+        }
+        .num-btn:active {
+            transform: scale(0.92);
+            background: #ffe6ed;
+        }
+        .num-btn.clear {
+            grid-column: span 2;
+            color: #c94a6d;
+            background: #fff0f3;
+        }
+
+        /* Clouds Overlay */
+        .clouds-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transform: translateY(100%);
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .clouds-overlay.active {
+            transform: translateY(0%);
+        }
+
+        .cloud-svg {
+            width: 100%;
+            fill: #ffffff;
+            filter: drop-shadow(0 -10px 15px rgba(216, 112, 147, 0.15));
+        }
+
+        /* Page 2: Envelopes Screen */
+        #screen-2 {
+            background: linear-gradient(180deg, #fff0f4 0%, #fce4ec 100%);
+        }
+
+        .screen-title {
+            font-size: 22px;
+            color: var(--dark-pink);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .envelopes-container {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 220px;
+            height: 150px;
+            background: #ffb6c1;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(158, 71, 107, 0.15);
+            cursor: pointer;
+            perspective: 1000px;
+            transition: transform 0.3s ease;
+        }
+        .envelope-wrapper:hover {
+            transform: translateY(-8px);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 110px solid transparent;
+            border-right: 110px solid transparent;
+            border-top: 85px solid #ffa0b0;
+            transform-origin: top;
+            transition: transform 0.5s ease 0.2s, z-index 0.2s;
+            z-index: 4;
+        }
+
+        .envelope-pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 110px solid #ffb6c1;
+            border-right: 110px solid #ffb6c1;
+            border-bottom: 85px solid #ff9baa;
+            border-radius: 0 0 12px 12px;
+            z-index: 3;
+        }
+
+        .letter-paper {
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            width: 190px;
+            height: 120px;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: var(--dark-pink);
+            font-weight: bold;
+            border: 1px dashed #ffb6c1;
+        }
+
+        .envelope-wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-wrapper.open .letter-paper {
+            transform: translateY(-80px);
+            z-index: 5;
+        }
+
+        /* Page 3: Love Letter Screen */
+        #screen-3 {
+            background: #fff8fa;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+
+        .letter-card {
+            background: #ffffff;
+            max-width: 650px;
+            width: 100%;
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(218, 112, 147, 0.12);
+            border: 2px solid #ffe4e9;
+            position: relative;
+            margin: auto;
+            animation: fadeIn 1.2s ease;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .letter-card::before {
+            content: "💖";
+            position: absolute;
+            top: -20px;
+            right: 30px;
+            font-size: 35px;
+            background: #fff8fa;
+            padding: 0 10px;
+        }
+
+        .letter-content {
+            font-family: 'Fredoka', 'Tajawal', sans-serif;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #4a2e38;
+            direction: ltr;
+            text-align: left;
+            white-space: pre-line;
+            font-weight: 500;
+        }
+
+        .next-btn {
+            margin-top: 25px;
+            background: linear-gradient(135deg, #ff8da1, #d87093);
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(216, 112, 147, 0.3);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .next-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(216, 112, 147, 0.4);
+        }
+
+        /* Page 4: Interactive Hearts Screen */
+        #screen-4 {
+            background: linear-gradient(135deg, #ffe6ed 0%, #ffc0cb 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .love-title {
+            font-size: 42px;
+            color: var(--dark-pink);
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .me-too-btn {
+            background: #ffffff;
+            color: var(--dark-pink);
+            border: 3px solid var(--primary-pink);
+            padding: 15px 40px;
+            font-size: 22px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        .me-too-btn:active {
+            transform: scale(0.92);
+            background: #fff0f3;
+        }
+
+        .placed-heart {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+            animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes heartPop {
+            0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .passcode-card { width: 280px; padding: 25px 20px; }
+            .envelopes-container { gap: 85px; }
+            .envelope-wrapper { width: 200px; height: 135px; }
+            .envelope-flap { border-left-width: 100px; border-right-width: 100px; border-top-width: 75px; }
+            .envelope-pocket { border-left-width: 100px; border-right-width: 100px; border-bottom-width: 75px; }
+            .letter-paper { width: 170px; height: 110px; font-size: 16px; }
+            .letter-content { font-size: 16px; line-height: 1.6; }
+            .letter-card { padding: 30px 20px; }
+            .love-title { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Music Audio Tag -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=soft-piano-10881.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music & Volume Control Box -->
+    <div class="music-control-box">
+        <button class="music-btn" id="music-toggle" onclick="toggleMusic()" title="تشغيل / إيقاف الموسيقى">🎵</button>
+        <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.05" value="0.35" oninput="changeVolume(this.value)" title="مستوى الصوت">
+    </div>
+
+    <canvas id="sakura-canvas"></canvas>
+
+    <!-- SCREEN 1: Passcode -->
+    <section class="screen active" id="screen-1">
+        <div class="passcode-card">
+            <h1 class="passcode-title">welcome bose</h1>
+            <div class="hint-text" id="hint">hint : our first meet</div>
+            <div class="passcode-display" id="display">******</div>
+
+            <div class="numpad">
+                <button class="num-btn" onclick="pressNum('1')">1</button>
+                <button class="num-btn" onclick="pressNum('2')">2</button>
+                <button class="num-btn" onclick="pressNum('3')">3</button>
+                <button class="num-btn" onclick="pressNum('4')">4</button>
+                <button class="num-btn" onclick="pressNum('5')">5</button>
+                <button class="num-btn" onclick="pressNum('6')">6</button>
+                <button class="num-btn" onclick="pressNum('7')">7</button>
+                <button class="num-btn" onclick="pressNum('8')">8</button>
+                <button class="num-btn" onclick="pressNum('9')">9</button>
+                <button class="num-btn clear" onclick="clearPass()">مسح</button>
+                <button class="num-btn" onclick="pressNum('0')">0</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCREEN 2: Interactive Envelopes -->
+    <section class="screen" id="screen-2">
+        <h2 class="screen-title">افتحي الأظرف الثلاثة ✨</h2>
+        <div class="envelopes-container">
+            <div class="envelope-wrapper" id="env-1" onclick="openEnvelope(1)">
+                <div class="envelope-flap"></div>
+                <div class="letter-paper">First kiss 1 September</div>
+                <div class="envelope-pocket"></div>
+            </div>
+
+            <div class="envelope-wrapper" id="env-2" onclick="openEnvelope(2)">
+                <div class="envelope-flap"></div>
+                <div class="letter-paper">First meeting 3 February</div>
+                <div class="envelope-pocket"></div>
+            </div>
+
+            <div class="envelope-wrapper" id="env-3" onclick="openEnvelope(3)">
+                <div class="envelope-flap"></div>
+                <div class="letter-paper">First date 7 July</div>
+                <div class="envelope-pocket"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCREEN 3: Clear Love Letter -->
+    <section class="screen" id="screen-3">
+        <div class="letter-card">
+            <div class="letter-content">
+my love my girl my queen my baby my cutie and lovely one i miss u evry moment i miss u when evry minutes pass u should know that i. Only love u bose i only wanna be with u i only wanna chill with u i only wanna stay with u all my life u really mean a lot to me + we are really good and lovely couple i love us
+
+Every day i imagine the moment when me and u got a baby our ransy  but until that happens u r my baby and i wanna be with u iam sorry nono for what happened and the misunderstanding
+
+Love you from u husband yousef
+            </div>
+            <button class="next-btn" onclick="triggerCloudsTransition('screen-3', 'screen-4')">Next ✨</button>
+        </div>
+    </section>
+
+    <!-- SCREEN 4: Interactive Hearts -->
+    <section class="screen" id="screen-4">
+        <h1 class="love-title">i love u bose ❤️</h1>
+        <button class="me-too-btn" onclick="spawnHearts()">me too 💕</button>
+    </section>
+
+    <!-- Clouds Overlay Transition -->
+    <div class="clouds-overlay" id="clouds">
+        <svg class="cloud-svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path d="M0,192L48,197.3C96,203,192,213,288,192C384,171,480,117,576,112C672,107,768,149,864,165.3C960,181,1056,171,1152,149.3C1248,128,1344,96,1392,80L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+        <div style="background: #ffffff; flex-grow: 1; width: 100%;"></div>
+        <svg class="cloud-svg" viewBox="0 0 1440 320" preserveAspectRatio="none" style="transform: rotate(180deg);">
+            <path d="M0,192L48,197.3C96,203,192,213,288,192C384,171,480,117,576,112C672,107,768,149,864,165.3C960,181,1056,171,1152,149.3C1248,128,1344,96,1392,80L1440,64L1440,320L1392,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+
+    <script>
+        const correctPass = "2042022";
+        let currentPass = "";
+        let wrongAttempts = 0;
+        let openedEnvelopes = new Set();
+
+        // Sound Effect Generator using Web Audio API (Soft clicks & cloud woosh)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playClickSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
+        }
+
+        function playCloudSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(350, audioCtx.currentTime + 0.6);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.6);
+        }
+
+        // Passcode Background Slideshow Images (Dark Pink Overlay + Your 5 Images)
+        const bgImages = [
+            "url('https://files.catbox.moe/sy0hz3.jpg')",
+            "url('https://files.catbox.moe/wzg168.jpg')",
+            "url('https://files.catbox.moe/3fafm7.jpg')",
+            "url('https://files.catbox.moe/vblg26.jpg')",
+            "url('https://files.catbox.moe/gpawc2.jpg')"
+        ];
+        let currentBgIndex = 0;
+        const screen1 = document.getElementById('screen-1');
+        
+        function updatePasscodeBackground() {
+            screen1.style.backgroundImage = `linear-gradient(rgba(158, 71, 107, 0.65), rgba(92, 59, 70, 0.75)), ${bgImages[currentBgIndex]}`;
+        }
+        updatePasscodeBackground();
+
+        setInterval(() => {
+            currentBgIndex = (currentBgIndex + 1) % bgImages.length;
+            updatePasscodeBackground();
+        }, 4000);
+
+        // Audio Handling
+        const bgMusic = document.getElementById('bg-music');
+        const musicToggleBtn = document.getElementById('music-toggle');
+        bgMusic.volume = 0.35;
+
+        function tryPlayMusic() {
+            bgMusic.play().then(() => {
+                musicToggleBtn.textContent = '🎵';
+            }).catch(() => {
+                musicToggleBtn.textContent = '🔇';
+            });
+        }
+
+        function toggleMusic() {
+            playClickSound();
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicToggleBtn.textContent = '🎵';
+            } else {
+                bgMusic.pause();
+                musicToggleBtn.textContent = '🔇';
+            }
+        }
+
+        function changeVolume(val) {
+            bgMusic.volume = val;
+        }
+
+        document.addEventListener('click', function startAudioOnInteraction() {
+            if (bgMusic.paused) {
+                tryPlayMusic();
+            }
+            document.removeEventListener('click', startAudioOnInteraction);
+        }, { once: true });
+
+        function pressNum(num) {
+            playClickSound();
+            if (currentPass.length < 7) {
+                currentPass += num;
+                updateDisplay();
+            }
+
+            if (currentPass.length === 7) {
+                checkPasscode();
+            }
+        }
+
+        function clearPass() {
+            playClickSound();
+            currentPass = "";
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const display = document.getElementById('display');
+            display.textContent = '•'.repeat(currentPass.length) || '******';
+        }
+
+        function checkPasscode() {
+            if (currentPass === correctPass) {
+                triggerCloudsTransition('screen-1', 'screen-2');
+            } else {
+                wrongAttempts++;
+                if (wrongAttempts >= 2) {
+                    document.getElementById('hint').classList.add('visible');
+                }
+                const display = document.getElementById('display');
+                display.style.transform = 'translateX(10px)';
+                setTimeout(() => display.style.transform = 'translateX(-10px)', 100);
+                setTimeout(() => display.style.transform = 'translateX(0)', 200);
+                currentPass = "";
+                setTimeout(updateDisplay, 300);
+            }
+        }
+
+        function triggerCloudsTransition(fromScreenId, toScreenId) {
+            playCloudSound();
+            const clouds = document.getElementById('clouds');
+            clouds.classList.add('active');
+
+            setTimeout(() => {
+                document.getElementById(fromScreenId).classList.remove('active');
+                document.getElementById(toScreenId).classList.add('active');
+            }, 600);
+
+            setTimeout(() => {
+                clouds.classList.remove('active');
+            }, 1200);
+        }
+
+        function openEnvelope(index) {
+            playClickSound();
+            const env = document.getElementById(`env-${index}`);
+            if (!env.classList.contains('open')) {
+                env.classList.add('open');
+                openedEnvelopes.add(index);
+
+                if (openedEnvelopes.size === 3) {
+                    setTimeout(() => {
+                        triggerCloudsTransition('screen-2', 'screen-3');
+                    }, 2200);
+                }
+            }
+        }
+
+        /* Hearts Logic */
+        const heartIcons = ['❤️', '💙', '💜', '💖', '💙', '💜', '❤️'];
+        function spawnHearts() {
+            playClickSound();
+            const screen4 = document.getElementById('screen-4');
+
+            for (let i = 0; i < 8; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'placed-heart';
+                heart.textContent = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+                
+                const x = Math.random() * (window.innerWidth - 60);
+                const y = Math.random() * (window.innerHeight - 60);
+                const size = Math.random() * 24 + 22;
+                const rotation = (Math.random() * 60) - 30;
+
+                heart.style.left = `${x}px`;
+                heart.style.top = `${y}px`;
+                heart.style.fontSize = `${size}px`;
+                heart.style.transform = `rotate(${rotation}deg)`;
+
+                screen4.appendChild(heart);
+            }
+        }
+
+        // Sakura Canvas Animation
+        const canvas = document.getElementById('sakura-canvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class Petal {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height - height;
+                this.size = Math.random() * 8 + 6;
+                this.speedY = Math.random() * 1.2 + 0.8;
+                this.speedX = Math.random() * 0.6 - 0.3;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 0.02 - 0.01;
+                this.color = '#ffc0cb';
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += Math.sin(this.y * 0.01) + this.speedX;
+                this.angle += this.spin;
+                if (this.y > height) {
+                    this.y = -20;
+                    this.x = Math.random() * width;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size / 2, Math.PI / 4, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const petals = Array.from({ length: 35 }, () => new Petal());
+        function animateSakura() {
+            ctx.clearRect(0, 0, width, height);
+            petals.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateSakura);
+        }
+        animateSakura();
+    </script>
+</body>
+</html>
