@@ -488,9 +488,9 @@
 
     <canvas id="sakura-canvas"></canvas>
 
-    <!-- Soft Piano Background Music Direct Link -->
-    <audio id="bg-music" loop crossorigin="anonymous">
-        <source src="https://files.catbox.moe/5m9y3g.mp3" type="audio/mpeg">
+    <!-- Reliable Direct Piano Audio Stream -->
+    <audio id="bg-music" loop preload="auto" crossorigin="anonymous">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=soft-piano-113970.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Controls Container -->
@@ -503,11 +503,11 @@
 
     <!-- SCREEN 1: Passcode -->
     <section class="screen active" id="screen-1">
-        <img src="IMG-20260626-WA0062_2.jpg" class="scatter-img img-1" alt="Memory 1">
-        <img src="Snapchat-1561558385_2.jpg" class="scatter-img img-2" alt="Memory 2">
-        <img src="file-54bY1LnProwdDFvdDsGuex_2.jpg" class="scatter-img img-3" alt="Memory 3">
-        <img src="IMG_20260627_211354_176_2.jpg" class="scatter-img img-4" alt="Memory 4">
-        <img src="IMG_20260707_172917_212_2.jpg" class="scatter-img img-5" alt="Memory 5">
+        <img src="IMG-20260626-WA0062.jpg" class="scatter-img img-1" alt="Memory 1">
+        <img src="Snapchat-1561558385.jpg" class="scatter-img img-2" alt="Memory 2">
+        <img src="file-54bY1LnProwdDFvdDsGuex.jpg" class="scatter-img img-3" alt="Memory 3">
+        <img src="IMG_20260627_211354_176.jpg" class="scatter-img img-4" alt="Memory 4">
+        <img src="IMG_20260707_172917_212.jpg" class="scatter-img img-5" alt="Memory 5">
 
         <div class="passcode-card">
             <h1 class="passcode-title">welcome bose</h1>
@@ -584,7 +584,7 @@ Love you from u husband yousef
         </svg>
         <div style="background: #ffffff; flex-grow: 1; width: 100%;"></div>
         <svg class="cloud-svg" viewBox="0 0 1440 320" preserveAspectRatio="none" style="transform: rotate(180deg);">
-            <path d="M0,192L48,197.3C96,203,192,213,288,192C384,171,480,117,576,112C672,107,768,149,864,165.3C960,181,1056,171,1152,149.3C1248,128,1344,96,1392,80L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            <path d="M0,192L48,197.3C96,203,192,213,288,192C384,171,480,117,576,112C672,107,768,149,864,165.3C960,181,1056,171,1152,149.3C1248,128,1344,96,1392,80L1440,64L1440,320L1392,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
         </svg>
     </div>
 
@@ -612,7 +612,7 @@ Love you from u husband yousef
                     document.getElementById('audioText').textContent = "إيقاف الموسيقى";
                     document.getElementById('audioIcon').textContent = "🎶";
                 }).catch(e => {
-                    console.log("Audio waiting for user click", e);
+                    console.log("Audio play allowed on user interaction", e);
                 });
             }
         }
@@ -768,11 +768,10 @@ Love you from u husband yousef
                 heart.className = 'placed-heart';
                 heart.textContent = heartIcons[Math.floor(Math.random() * heartIcons.length)];
                 
-                // Random position across the screen
                 const x = Math.random() * (window.innerWidth - 60);
                 const y = Math.random() * (window.innerHeight - 60);
-                const size = Math.random() * 24 + 22; // 22px to 46px
-                const rotation = (Math.random() * 60) - 30; // -30deg to 30deg
+                const size = Math.random() * 24 + 22;
+                const rotation = (Math.random() * 60) - 30;
 
                 heart.style.left = `${x}px`;
                 heart.style.top = `${y}px`;
