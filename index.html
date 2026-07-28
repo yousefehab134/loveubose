@@ -488,9 +488,9 @@
 
     <canvas id="sakura-canvas"></canvas>
 
-    <!-- Reliable Direct Piano Audio Stream -->
+    <!-- HIFI Relaxing Piano Music Stream -->
     <audio id="bg-music" loop preload="auto" crossorigin="anonymous">
-        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=soft-piano-113970.mp3" type="audio/mpeg">
+        <source src="https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Controls Container -->
@@ -503,6 +503,7 @@
 
     <!-- SCREEN 1: Passcode -->
     <section class="screen active" id="screen-1">
+        <!-- Exact Matching Upper/Lower Case File Names From Your Repo -->
         <img src="IMG-20260626-WA0062.jpg" class="scatter-img img-1" alt="Memory 1">
         <img src="Snapchat-1561558385.jpg" class="scatter-img img-2" alt="Memory 2">
         <img src="file-54bY1LnProwdDFvdDsGuex.jpg" class="scatter-img img-3" alt="Memory 3">
@@ -612,7 +613,7 @@ Love you from u husband yousef
                     document.getElementById('audioText').textContent = "إيقاف الموسيقى";
                     document.getElementById('audioIcon').textContent = "🎶";
                 }).catch(e => {
-                    console.log("Audio play allowed on user interaction", e);
+                    console.log("Audio ready", e);
                 });
             }
         }
@@ -757,7 +758,7 @@ Love you from u husband yousef
             }
         }
 
-        /* Spawn Persistent Red, Blue, and Purple Hearts */
+        /* Hearts Logic */
         const heartIcons = ['❤️', '💙', '💜', '💖', '💙', '💜', '❤️'];
         function spawnHearts() {
             playPopSound();
@@ -782,7 +783,7 @@ Love you from u husband yousef
             }
         }
 
-        // Sakura Effect Logic
+        // Sakura Canvas Effect
         const canvas = document.getElementById('sakura-canvas');
         const ctx = canvas.getContext('2d');
         let width = canvas.width = window.innerWidth;
